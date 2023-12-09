@@ -6,11 +6,10 @@ import collections
 colors = {"red": 12, "green": 13, "blue": 14}
 
 file = open("input")
-games = file.read()
-games = games.split("\n")
+games = file.read().split("\n")
 
-file = open("test_input")
-test_games = file.read().split("\n")
+test_file = open("test_input")
+test_games = test_file.read().split("\n")
 
 def parse_line(line):
     [game, cubes] = line.split(": ")
@@ -37,14 +36,38 @@ def is_game_feasible(max_colors):
             feasible = False
     return feasible
 
-sum_of_ids = 0
+def fewest_cubes(line):
+    [game, cubes] = line.split(": ")
+    draws = cubes.split("; ")
+    fewest_cubes = collections.defaultdict(lambda:0)
+    for draw in draws:
+        cubes = draw.split(", ")
+        for cube in cubes:
+            [no, col] = cube.split(" ")
+            no = int(no)
+            fewest_cubes[col] = max(fewest_cubes[col], no)
+    return fewest_cubes
+
+sum_of_ids_part_1 = 0
+sum_of_ids_part_2 = 0
 for game in games:
     max_colors = parse_line(game)
     game_id = parse_game_id(game)
     if is_game_feasible(max_colors): 
-        sum_of_ids += game_id
-        
-print(sum_of_ids)
+        sum_of_ids_part_1 += game_id
+    power_of_set = 1
+    for val in max_colors.values():
+        power_of_set = power_of_set * val
+    sum_of_ids_part_2 += power_of_set
+
+sum_of_products = 0
+
+print("PART 1. ", sum_of_ids_part_1)
+
+print("PART 2. ", sum_of_ids_part_2)
+
+
+# TESTS
 
 class Test(unittest.TestCase):
 
